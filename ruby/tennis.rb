@@ -1,71 +1,108 @@
 
 class TennisGame1
 
-  def initialize(player1Name, player2Name)
-    @player1Name = player1Name
-    @player2Name = player2Name
+  LOVE = 0
+  FIFTEEN = 1
+  THIRTY = 2
+  FORTY = 3
+  SCORES = [LOVE, FIFTEEN, THIRTY, FORTY]
+
+  def initialize(player1, player2)
+    @player1 = player1
+    @player2 = player2
     @p1points = 0
     @p2points = 0
   end
-        
-  def won_point(playerName)
-    if playerName == @player1Name
+
+  def won_point(player_name)
+    if player_name == @player1
       @p1points += 1
     else
       @p2points += 1
     end
   end
-  
+
   def score
     result = ""
-    tempScore=0
-    if (@p1points==@p2points)
-      result = {
-          0 => "Love-All",
-          1 => "Fifteen-All",
-          2 => "Thirty-All",
-      }.fetch(@p1points, "Deuce")
-    elsif (@p1points>=4 or @p2points>=4)
-      minusResult = @p1points-@p2points
-      if (minusResult==1)
-        result ="Advantage " + @player1Name
-      elsif (minusResult ==-1)
-        result ="Advantage " + @player2Name
-      elsif (minusResult>=2)
-        result = "Win for " + @player1Name
-      else
-        result ="Win for " + @player2Name
-      end
+    temp_score = 0
+    if equal_score?
+      result = equal_score
+    elsif matchpoint?
+      result = score_after_deuce
     else
-      (1...3).each do |i|
-        if (i==1)
-          tempScore = @p1points
-        else
-          result+="-"
-          tempScore = @p2points
-        end
-        result += {
-            0 => "Love",
-            1 => "Fifteen",
-            2 => "Thirty",
-            3 => "Forty",
-        }[tempScore]
-      end
+      result = temp
+      # (1..2).each do |i|
+      #   if i == 1
+      #     temp_score = @p1points
+      #   else
+      #     result += "-"
+      #     temp_score = @p2points
+      #   end
+      #   result += score_names[temp_score]
+      # end
     end
     result
   end
+
+  def temp(score_names)
+    SCORES[@p1points] + SCORES[@p2points]
+  end
+
+  def score_names(temp)
+    {
+      LOVE => "Love",
+      FIFTEEN => "Fifteen",
+      THIRTY => "Thirty",
+      FORTY => "Forty"
+    }
+  end
+
+  def equal_score
+    case @p1points
+    when LOVE
+      "Love-All"
+    when FIFTEEN
+      "Fifteen-All"
+    when THIRTY
+      "Thirty-All"
+    else
+      "Deuce"
+    end
+  end
+
+  def matchpoint?
+    @p1points >= 4 || @p2points >= 4
+  end
+
+  def equal_score?
+    @p1points == @p2points
+  end
+
+  def score_after_deuce
+    score_diff = @p1points - @p2points
+    if score_diff == 1
+      "Advantage " + @player1
+    elsif score_diff == -1
+      "Advantage " + @player2
+    elsif score_diff >= 2
+      "Win for " + @player1
+    else
+      "Win for " + @player2
+    end
+  end
+
 end
 
 class TennisGame2
-  def initialize(player1Name, player2Name)
-    @player1Name = player1Name
-    @player2Name = player2Name
+  def initialize(player1, player2)
+    @player1 = player1
+    @player2 = player2
     @p1points = 0
     @p2points = 0
   end
-      
-  def won_point(playerName)
-    if playerName == @player1Name
+
+  def won_point(player_name)
+    if player_name == @player1
       p1Score()
     else
       p2Score()
@@ -89,7 +126,7 @@ class TennisGame2
     if (@p1points==@p2points and @p1points>2)
         result = "Deuce"
     end
-    
+
     p1res = ""
     p2res = ""
     if (@p1points > 0 and @p2points==0)
@@ -115,11 +152,11 @@ class TennisGame2
       if (@p2points==3)
         p2res = "Forty"
       end
-      
+
       p1res = "Love"
       result = p1res + "-" + p2res
     end
-    
+
     if (@p1points>@p2points and @p1points < 4)
       if (@p1points==2)
         p1res="Thirty"
@@ -151,16 +188,16 @@ class TennisGame2
       result = p1res + "-" + p2res
     end
     if (@p1points > @p2points and @p2points >= 3)
-      result = "Advantage " + @player1Name
+      result = "Advantage " + @player1
     end
     if (@p2points > @p1points and @p1points >= 3)
-      result = "Advantage " + @player2Name
+      result = "Advantage " + @player2
     end
     if (@p1points>=4 and @p2points>=0 and (@p1points-@p2points)>=2)
-      result = "Win for " + @player1Name
+      result = "Win for " + @player1
     end
     if (@p2points>=4 and @p1points>=0 and (@p2points-@p1points)>=2)
-      result = "Win for " + @player2Name
+      result = "Win for " + @player2
     end
     result
   end
@@ -180,20 +217,20 @@ class TennisGame2
   def p1Score
     @p1points +=1
   end
-  
+
   def p2Score
     @p2points +=1
   end
 end
 
 class TennisGame3
-  def initialize(player1Name, player2Name)
-    @p1N = player1Name
-    @p2N = player2Name
+  def initialize(player1, player2)
+    @p1N = player1
+    @p2N = player2
     @p1 = 0
     @p2 = 0
   end
-      
+
   def won_point(n)
     if n == @p1N
         @p1 += 1
@@ -201,7 +238,7 @@ class TennisGame3
         @p2 += 1
     end
   end
-  
+
   def score
     if (@p1 < 4 and @p2 < 4) and (@p1 + @p2 < 6)
       p = ["Love", "Fifteen", "Thirty", "Forty"]
